@@ -1,0 +1,25 @@
+{
+  "name": "musicmint",
+  "version": "1.0.0",
+  "description": "dj nft music",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/verbalius/musicmint.git"
+  },
+  "keywords": [
+    "nft",
+    "dj",
+    "music",
+    "ethack"
+  ],
+  "author": "music mint team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/verbalius/musicmint/issues"
+  },
+  "homepage": "https://github.com/verbalius/musicmint#readme"
+}
