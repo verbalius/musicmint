@@ -1,16 +1,18 @@
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import { aby } from "../../../aby/aby.ts";
-import { parseEther } from "viem";
+import { DonationItemT } from "../../types/types.ts";
+import { useEffect } from "react";
+import Button from "../../components /ui/button/Button.tsx";
 
 const MainPage = () => {
   const { data, isLoading, isSuccess, write } = useContractWrite({
-    address: "0x3eA4876ccC7ba95aeaaaD68148aDE9C5D944fCb9",
+    address: "0x671Cf11827845eFCED7b3eE9a43cfabFCa12C582",
     abi: aby,
     functionName: "donate",
   });
 
-  const { data: readData } = useContractRead({
-    address: "0x3eA4876ccC7ba95aeaaaD68148aDE9C5D944fCb9",
+  const { data: readData, refetch } = useContractRead({
+    address: "0x671Cf11827845eFCED7b3eE9a43cfabFCa12C582",
     abi: aby,
     functionName: "getLastDonations",
   });
@@ -20,19 +22,33 @@ const MainPage = () => {
   if (!address) {
     return <div />;
   }
+
+  useEffect(() => {}, []);
   return (
     <div>
       Main page
-      <button
+      <Button
+        variant={"primary"}
+        size={"md"}
         onClick={() => {
           write({
-            args: [0.5],
+            value: BigInt(0.05 * 10 ** 18),
             from: address,
           });
         }}
       >
         Stake
-      </button>
+      </Button>
+      <div>
+        {" "}
+        {readData &&
+          readData.map((item: DonationItemT, index: number) => (
+            <div key={index}>
+              {item.donor} -{(+item.amount.toString() / 10 ** 18).toString()}{" "}
+              Matic
+            </div>
+          ))}
+      </div>
     </div>
   );
 };
