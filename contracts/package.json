@@ -1,0 +1,17 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.49.0"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-waffle": "^2.0.5",
+    "@openzeppelin/contracts": "^4.8.3",
+    "ethers": "^6.3.0",
+    "hardhat": "^2.14.0",
+    "hardhat-abi-exporter": "^2.10.1"
+  }
+}
