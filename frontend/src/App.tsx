@@ -1,6 +1,12 @@
 import RootLayout from "./components /root-layout /RootLayout.tsx";
 import MainPage from "./pages/main-page/MainPage.tsx";
-import { WagmiConfig, createConfig, configureChains } from "wagmi";
+import {
+  WagmiConfig,
+  createConfig,
+  configureChains,
+  useNetwork,
+  useSwitchNetwork,
+} from "wagmi";
 import { polygonMumbai } from "@wagmi/core/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { infuraProvider } from "wagmi/providers/infura";

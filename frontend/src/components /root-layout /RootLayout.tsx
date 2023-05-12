@@ -1,13 +1,29 @@
-import React from "react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import React, { useEffect } from "react";
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useNetwork,
+  useSwitchNetwork,
+} from "wagmi";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const { address, isConnected } = useAccount();
   const { connect, connectors, isLoading } = useConnect();
   const { disconnect } = useDisconnect();
 
+  const { chain } = useNetwork();
+  const { chains, switchNetwork } = useSwitchNetwork();
+
+  console.log(chains, chain, "CHAINSS");
+  useEffect(() => {
+    if (chain?.id !== 80001 && switchNetwork) {
+      switchNetwork(80001);
+    }
+  }, [chain]);
+
   const [metamaskConnector] = connectors;
-  console.log(metamaskConnector, "CONNECTOR");
+
   return (
     <div className={"flex flex-col h-screen"}>
       <div className={"flex justify-between items-center"}>
