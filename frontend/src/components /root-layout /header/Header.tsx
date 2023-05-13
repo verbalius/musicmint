@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 
 import logo from "../../../assets/logo.png";
-import { Link } from "react-router-dom";
+
 import StreamCard from "../../stream-card/StreamCard.tsx";
 import { trimAddress } from "../../../helpers.ts";
 

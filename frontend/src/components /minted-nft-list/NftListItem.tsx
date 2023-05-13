@@ -21,7 +21,11 @@ const NftListItem = ({ link, address }: { link: string; address: string }) => {
   }, []);
 
   return (
-    <div className={"flex gap-4 border border-[#598CF4] rounded-md"}>
+    <div
+      className={
+        "flex gap-4 border border-[#598CF4] rounded-md overflow-hidden"
+      }
+    >
       <div>
         {imageLink ? (
           <img
