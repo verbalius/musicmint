@@ -32,7 +32,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         {data &&
           data.streams.map((stream: StreamT) => (
             <div
-              className={`py-8 px-10 bg-white rounded-xl border border-[#CACDD5] ${
+              className={`py-8 px-10 bg-white rounded-xl border border-[#CACDD5] font-semibold ${
                 currentStream?.id !== stream.id ? "cursor-pointer" : ""
               }`}
               key={stream.id}

@@ -1,3 +1,7 @@
+import dayjs, { Dayjs } from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
+dayjs.extend(isSameOrAfter);
 export const trimAddress = (address?: string) => {
   if (!address) {
     return "";
@@ -24,3 +28,20 @@ export const getImageUrl = (artistName?: string) => {
     baseURL + artistName + year + month + day + hour + minute + imageFormat
   );
 };
+
+export function isWithinLastMinute(timestamp: string, now: Dayjs): boolean {
+  const timestampDate: Dayjs = dayjs(timestamp);
+
+  const minuteAgo: Dayjs = now.subtract(1, "minute");
+  const startOfCurrentMinute: Dayjs = now.startOf("minute");
+  const endOfCurrentMinute: Dayjs = now.endOf("minute");
+
+  console.log(minuteAgo);
+
+  return (
+    (timestampDate.isSameOrAfter(startOfCurrentMinute) &&
+      timestampDate.isBefore(endOfCurrentMinute)) ||
+    (timestampDate.isSameOrAfter(minuteAgo) &&
+      timestampDate.isBefore(startOfCurrentMinute))
+  );
+}
