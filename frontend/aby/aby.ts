@@ -80,10 +80,42 @@ export const aby = [
         type: "address",
       },
     ],
+    name: "claim",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_artistAddress",
+        type: "address",
+      },
+    ],
     name: "donate",
     outputs: [],
     stateMutability: "payable",
     type: "function",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "artistAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "DonationClaimed",
+    type: "event",
   },
   {
     anonymous: false,
@@ -353,25 +385,6 @@ export const aby = [
         type: "uint256",
       },
     ],
-    name: "creators",
-    outputs: [
-      {
-        internalType: "address",
-        name: "creatorAddress",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
     name: "donations",
     outputs: [
       {
@@ -393,6 +406,11 @@ export const aby = [
         internalType: "address",
         name: "artistAddress",
         type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "claimed",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -418,7 +436,13 @@ export const aby = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "artistAddress",
+        type: "address",
+      },
+    ],
     name: "getLastDonations",
     outputs: [
       {
@@ -443,6 +467,11 @@ export const aby = [
             name: "artistAddress",
             type: "address",
           },
+          {
+            internalType: "bool",
+            name: "claimed",
+            type: "bool",
+          },
         ],
         internalType: "struct DonationContract.Donation[]",
         name: "",
@@ -453,7 +482,13 @@ export const aby = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "artistAddress",
+        type: "address",
+      },
+    ],
     name: "getNFTs",
     outputs: [
       {
@@ -467,6 +502,11 @@ export const aby = [
             internalType: "string",
             name: "metadataURI",
             type: "string",
+          },
+          {
+            internalType: "address",
+            name: "artistAddress",
+            type: "address",
           },
         ],
         internalType: "struct DonationContract.NFT[]",
@@ -491,6 +531,11 @@ export const aby = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -552,6 +597,11 @@ export const aby = [
         internalType: "string",
         name: "metadataURI",
         type: "string",
+      },
+      {
+        internalType: "address",
+        name: "artistAddress",
+        type: "address",
       },
     ],
     stateMutability: "view",
