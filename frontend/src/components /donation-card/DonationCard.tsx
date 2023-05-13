@@ -28,14 +28,14 @@ const DonationCard = () => {
 
   return (
     <div className={"flex flex-col"}>
-      <h2 className={"text-2xl font-bold text-center mb-14"}>
-        SUPPORT STREAMER
-      </h2>
       <div
         className={
           "flex flex-col bg-white p-10 pb-16 rounded-2.5xl border border-outline shadow-black-e3"
         }
       >
+        <h2 className={"text-2xl font-bold text-center mb-14"}>
+          SUPPORT STREAMER
+        </h2>
         <div className={"flex gap-4 mb-1"}>
           <img src={CoinsIcon} alt={"coin icon"} />
           <h4 className={"text-information-400 text-3xl font-semibold"}>
