@@ -44,7 +44,9 @@ const Header = () => {
       <div className={"w-1/5 flex justify-end"}>
         <div className={"flex gap-2"}>
           {!isMetamaskInstalled ? (
-            <Link to={"https://metamask.io/download/"}>Metamask link</Link>
+            <a href={"https://metamask.io/download/"}>
+              Install Metamask to connect
+            </a>
           ) : isConnected ? (
             <Button
               variant={"bordered"}
