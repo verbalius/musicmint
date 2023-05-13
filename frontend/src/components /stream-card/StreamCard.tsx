@@ -1,29 +1,22 @@
 import mockedImage from "../../assets/mockStreamImage.jpg";
 import playIcon from "../../assets/icons/svg/play-icon.svg";
 import pauseIcon from "../../assets/icons/svg/pause-icon.svg";
-import useSWR from "swr";
-import axios from "axios";
-import { LegacyRef, RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useAtom } from "jotai";
+import { currentStreamAtom } from "../../App.tsx";
 
 const StreamCard = () => {
   const [streamLink, setStreamLink] = useState("");
-  const [currentStream, setCurrentStream] = useState({});
-  const { data, error } = useSWR(["getStreamInfo"], () =>
-    axios(`http://localhost:1985/api/v1/streams/`).then((r) => r?.data)
-  );
+  const [currentStream] = useAtom(currentStreamAtom);
   const playerRef = useRef<any | undefined>();
 
   useEffect(() => {
-    if (data) {
-      const curStream = data.streams?.[0];
-      setCurrentStream(curStream);
-      console.log(data);
-
+    if (currentStream) {
       setStreamLink(
-        `http://localhost:8082/${curStream.app}/${curStream.name}.mp3`
+        `http://localhost:8082/${currentStream.app}/${currentStream.name}.mp3`
       );
     }
-  }, [data]);
+  }, [currentStream]);
 
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -40,8 +33,16 @@ const StreamCard = () => {
     }
   };
 
-  if (!data) {
-    return <div>no data</div>;
+  if (!currentStream && !streamLink) {
+    return (
+      <div
+        className={
+          "h-[158px] w-[314px] flex items-center justify-center rounded-xl border border-[#CACDD5] shadow-black-e3 font-semibold text-3xl"
+        }
+      >
+        No active streams
+      </div>
+    );
   }
 
   return (
@@ -58,7 +59,7 @@ const StreamCard = () => {
         />
       </div>
       <div className={"flex flex-col w-full  text-xs"}>
-        <h1 className={"mb-2 font-semibold"}>{currentStream.name}</h1>
+        <h1 className={"mb-2 font-semibold"}>{currentStream?.app}</h1>
         <p className={"font-300"}>
           Support the stream: Streaming live from the indoor garden tonight...
           Playing unreleased tracks amongst all the classics.

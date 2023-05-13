@@ -21,9 +21,9 @@ export default {
           default: "#525C76",
         },
         outline: "#CACDD5",
-        boxShadow: {
-          "black-e3": "0px 4px 5px -1px rgba(0, 0, 0, 0.08);",
-        },
+      },
+      boxShadow: {
+        "black-e3": "0px 4px 5px -1px rgba(0, 0, 0, 0.08);",
       },
     },
   },

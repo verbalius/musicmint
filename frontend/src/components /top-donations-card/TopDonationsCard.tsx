@@ -3,16 +3,23 @@ import { useAccount, useContractRead } from "wagmi";
 import { CONTACT_ADDRESS } from "../../constants /address.ts";
 import { aby } from "../../../aby/aby.ts";
 import { trimAddress } from "../../helpers.ts";
+import { useAtom } from "jotai";
+import { currentStreamAtom } from "../../App.tsx";
+import { useEffect } from "react";
 
 const TopDonationsCard = () => {
+  const [currentStream] = useAtom(currentStreamAtom);
   const { address } = useAccount();
+
   const { data, isError, isLoading } = useContractRead({
     address: CONTACT_ADDRESS,
     abi: aby,
     functionName: "getLastDonations",
-    args: ["0x19e6232E41815f70e959d54C11CfC267003215E9"],
+    args: [currentStream?.name ? currentStream.name : "1"],
+    watch: true,
   });
-  console.log(data, "SADASD");
+
+  useEffect(() => {}, [currentStream?.name]);
 
   return (
     <div className={"flex flex-col"}>
@@ -22,7 +29,11 @@ const TopDonationsCard = () => {
           "flex flex-col bg-white p-10 pb-16 rounded-2.5xl border border-outline shadow-black-e3"
         }
       >
+        {!currentStream && (
+          <div>No active streams, please, come back later</div>
+        )}
         {data &&
+          currentStream &&
           (data as any).map((item: DonationItemT, index: number) => (
             <div key={index}>
               {trimAddress(item.donor)} -{" "}

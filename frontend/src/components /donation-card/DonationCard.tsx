@@ -7,10 +7,13 @@ import { CONTACT_ADDRESS } from "../../constants /address.ts";
 import { aby } from "../../../aby/aby.ts";
 import { useState } from "react";
 import CounterInput from "../ui/counter-input/CounterInput.tsx";
+import { useAtom } from "jotai";
+import { currentStreamAtom } from "../../App.tsx";
 
 const DonationCard = () => {
   const [donation, setDonation] = useState(0);
   const { address, isConnected } = useAccount();
+  const [currentStream] = useAtom(currentStreamAtom);
 
   const { writeAsync } = useContractWrite({
     address: CONTACT_ADDRESS,
@@ -49,7 +52,9 @@ const DonationCard = () => {
           <h5 className={"text-lg font-semibold"}>POLYGON (MATIC)</h5>
         </div>
         <div>
-          {isConnected ? (
+          {!currentStream ? (
+            <div>No active streams, please, come back later</div>
+          ) : isConnected && currentStream ? (
             <div className={"flex gap-4 h-full"}>
               <div className={"flex h-full w-[50%]"}>
                 <CounterInput
@@ -69,7 +74,7 @@ const DonationCard = () => {
                       const res = await writeAsync({
                         // @ts-ignore
                         from: address,
-                        args: ["0x19e6232E41815f70e959d54C11CfC267003215E9"],
+                        args: [currentStream.name],
                         value: BigInt(donation * 10 ** 18),
                       });
                       if (res.hash) {
