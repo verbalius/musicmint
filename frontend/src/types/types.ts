@@ -30,3 +30,8 @@ export interface Publish {
   active: boolean;
   cid: string;
 }
+export type NftItemT = {
+  recipient: string;
+  metadataURI: string;
+  artistAddress: string;
+};

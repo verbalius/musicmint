@@ -27,8 +27,6 @@ const TopDonationsCard = () => {
     watch: true,
   });
 
-  useEffect(() => {}, [currentStream?.name]);
-
   const renderList = useMemo(
     () =>
       data &&
@@ -58,7 +56,9 @@ const TopDonationsCard = () => {
           {!currentStream && (
             <div>No active streams, please, come back later</div>
           )}
-          {!renderList?.length && <div>No donations per this minute</div>}
+          {!renderList?.length && currentStream && (
+            <div>No donations per this minute</div>
+          )}
           {renderList &&
             renderList.map((item: DonationItemT, index: number) => (
               <div

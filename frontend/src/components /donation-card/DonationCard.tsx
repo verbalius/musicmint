@@ -27,10 +27,10 @@ const DonationCard = () => {
   });
 
   return (
-    <div className={"flex flex-col"}>
+    <div className={"flex flex-col h-full"}>
       <div
         className={
-          "flex flex-col bg-white p-10 pb-16 rounded-2.5xl border border-outline shadow-black-e3"
+          "h-full flex flex-col bg-white p-10 pb-16 rounded-2.5xl border border-outline shadow-black-e3"
         }
       >
         <h2 className={"text-2xl font-bold text-center mb-14"}>
@@ -51,7 +51,7 @@ const DonationCard = () => {
           <img src={PolygonIcon} alt={"polygon_icon"} />
           <h5 className={"text-lg font-semibold"}>POLYGON (MATIC)</h5>
         </div>
-        <div>
+        <div className={"mt-auto"}>
           {!currentStream ? (
             <div>No active streams, please, come back later</div>
           ) : isConnected && currentStream ? (
