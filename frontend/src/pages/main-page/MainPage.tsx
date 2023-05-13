@@ -1,53 +1,102 @@
-import { useAccount, useContractRead, useContractWrite } from "wagmi";
+import {
+  useAccount,
+  useBalance,
+  useContractRead,
+  useContractWrite,
+} from "wagmi";
 import { aby } from "../../../aby/aby.ts";
 import { DonationItemT } from "../../types/types.ts";
-import { useEffect } from "react";
+
 import Button from "../../components /ui/button/Button.tsx";
+import { toast } from "react-toastify";
+import { CONTACT_ADDRESS } from "../../constants /address.ts";
+import { useMemo, useState } from "react";
 
 const MainPage = () => {
-  const { data, isLoading, isSuccess, write } = useContractWrite({
-    address: "0x671Cf11827845eFCED7b3eE9a43cfabFCa12C582",
+  const { address, isConnected } = useAccount();
+  const { data: balance } = useBalance({
+    address: address,
+    token: "0x0000000000000000000000000000000000001010",
+  });
+  const [donateValue, setDonateValue] = useState(0);
+
+  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
+    address: CONTACT_ADDRESS,
     abi: aby,
     functionName: "donate",
   });
 
   const { data: readData, refetch } = useContractRead({
-    address: "0x671Cf11827845eFCED7b3eE9a43cfabFCa12C582",
+    address: CONTACT_ADDRESS,
     abi: aby,
     functionName: "getLastDonations",
   });
-  console.log(readData, "FFF");
-  const { address, isConnected } = useAccount();
 
-  if (!address) {
-    return <div />;
-  }
+  console.log(balance, "BALANCE");
+  const donationsData = useMemo(
+    () =>
+      (readData as DonationItemT[]).filter(
+        (item) => item.artistAddress === address
+      ),
+    [readData]
+  );
 
-  useEffect(() => {}, []);
   return (
     <div>
       Main page
-      <Button
-        variant={"primary"}
-        size={"md"}
-        onClick={() => {
-          write({
-            value: BigInt(0.05 * 10 ** 18),
-            from: address,
-          });
-        }}
-      >
-        Stake
-      </Button>
+      {isConnected && (
+        <>
+          <div>
+            <input
+              type={"number"}
+              value={donateValue}
+              onChange={(e) => setDonateValue(+e.target.value)}
+            />
+            <Button
+              size={"md"}
+              variant={"bordered"}
+              onClick={() => {
+                if (balance?.value) {
+                  setDonateValue(balance.value.toString());
+                }
+              }}
+            >
+              Max
+            </Button>
+          </div>
+
+          <Button
+            variant={"primary"}
+            size={"md"}
+            onClick={async () => {
+              try {
+                const res = await writeAsync({
+                  // @ts-ignore
+                  from: address,
+                  args: [address],
+                  value: BigInt(donateValue * 10 ** 18),
+                });
+                if (res.hash) {
+                  toast.success(`Success ${res.hash}`);
+                }
+
+                console.log(res);
+              } catch (e: any) {
+                toast.error(e.details);
+              }
+            }}
+          >
+            Stake
+          </Button>
+        </>
+      )}
       <div>
-        {" "}
-        {readData &&
-          readData.map((item: DonationItemT, index: number) => (
-            <div key={index}>
-              {item.donor} -{(+item.amount.toString() / 10 ** 18).toString()}{" "}
-              Matic
-            </div>
-          ))}
+        {donationsData.map((item: DonationItemT, index: number) => (
+          <div key={index}>
+            {item.donor} -{(+item.amount.toString() / 10 ** 18).toString()}{" "}
+            Matic
+          </div>
+        ))}
       </div>
     </div>
   );

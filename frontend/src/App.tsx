@@ -3,15 +3,13 @@ import MainPage from "./pages/main-page/MainPage.tsx";
 import { WagmiConfig, createConfig, configureChains } from "wagmi";
 import { polygonMumbai } from "@wagmi/core/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [polygonMumbai],
-  [
-    infuraProvider({ apiKey: "9346979f8d1f4b298a3ac4f71806fd30" }),
-    publicProvider(),
-  ]
+  [publicProvider()]
 );
 
 const config = createConfig({
@@ -23,11 +21,14 @@ const config = createConfig({
 
 function App() {
   return (
-    <WagmiConfig config={config}>
-      <RootLayout>
-        <MainPage />
-      </RootLayout>
-    </WagmiConfig>
+    <>
+      <ToastContainer />{" "}
+      <WagmiConfig config={config}>
+        <RootLayout>
+          <MainPage />
+        </RootLayout>
+      </WagmiConfig>
+    </>
   );
 }
 
