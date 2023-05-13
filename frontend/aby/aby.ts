@@ -1,5 +1,10 @@
 export const aby = [
   {
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -50,118 +55,6 @@ export const aby = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "donor",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "timestamp",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "artistAddress",
-        type: "address",
-      },
-    ],
-    name: "DonationReceived",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "recipient",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "metadataURI",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "creator",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "creatorEarnings",
-        type: "uint256",
-      },
-    ],
-    name: "NFTMinted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "Transfer",
-    type: "event",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -193,6 +86,37 @@ export const aby = [
     type: "function",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "donor",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "artistAddress",
+        type: "address",
+      },
+    ],
+    name: "DonationReceived",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -209,16 +133,61 @@ export const aby = [
         name: "creator",
         type: "address",
       },
-      {
-        internalType: "uint256",
-        name: "creatorEarnings",
-        type: "uint256",
-      },
     ],
     name: "mintNFT",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "metadataURI",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "creator",
+        type: "address",
+      },
+    ],
+    name: "NFTMinted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
     inputs: [],
@@ -297,6 +266,31 @@ export const aby = [
     type: "function",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "Transfer",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -333,11 +327,6 @@ export const aby = [
     type: "function",
   },
   {
-    inputs: [],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -370,11 +359,6 @@ export const aby = [
         internalType: "address",
         name: "creatorAddress",
         type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "creatorEarnings",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -469,6 +453,50 @@ export const aby = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getNFTs",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "recipient",
+            type: "address",
+          },
+          {
+            internalType: "string",
+            name: "metadataURI",
+            type: "string",
+          },
+        ],
+        internalType: "struct DonationContract.NFT[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "artistAddress",
+        type: "address",
+      },
+    ],
+    name: "getTopArtistDonation",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -499,6 +527,30 @@ export const aby = [
       {
         internalType: "string",
         name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "nfts",
+    outputs: [
+      {
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "metadataURI",
         type: "string",
       },
     ],

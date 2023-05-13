@@ -11,15 +11,16 @@ import CounterInput from "../ui/counter-input/CounterInput.tsx";
 const DonationCard = () => {
   const [donation, setDonation] = useState(0);
   const { address, isConnected } = useAccount();
-  const { data: balance } = useBalance({
-    address: address,
-    token: "0x0000000000000000000000000000000000001010",
-  });
 
-  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
+  const { writeAsync } = useContractWrite({
     address: CONTACT_ADDRESS,
     abi: aby,
     functionName: "donate",
+  });
+
+  const { data: balance } = useBalance({
+    address: address,
+    token: "0x0000000000000000000000000000000000001010",
   });
 
   return (
@@ -48,47 +49,45 @@ const DonationCard = () => {
           <h5 className={"text-lg font-semibold"}>POLYGON (MATIC)</h5>
         </div>
         <div>
-          {isConnected && (
-            <div>
-              <CounterInput value={donation} setValue={setDonation} />
-              <div className={"flex"}>
+          {isConnected ? (
+            <div className={"flex gap-4 h-full"}>
+              <div className={"flex h-full w-[50%]"}>
+                <CounterInput
+                  value={donation}
+                  setValue={setDonation}
+                  maxValue={balance?.formatted}
+                />
+              </div>
+              <div className={"w-[50%]"}>
                 <Button
+                  variant={"primary"}
+                  disabled={!donation}
                   size={"md"}
-                  variant={"bordered"}
-                  // onClick={() => {
-                  //   if (balance?.value) {
-                  //     setDonateValue(balance.value.toString());
-                  //   }
-                  // }}
+                  widthFull
+                  onClick={async () => {
+                    try {
+                      const res = await writeAsync({
+                        // @ts-ignore
+                        from: address,
+                        args: ["0x19e6232E41815f70e959d54C11CfC267003215E9"],
+                        value: BigInt(donation * 10 ** 18),
+                      });
+                      if (res.hash) {
+                        toast.success(`Success ${res.hash}`);
+                      }
+
+                      console.log(res);
+                    } catch (e: any) {
+                      toast.error(e.details);
+                    }
+                  }}
                 >
-                  Max
+                  Donate
                 </Button>
               </div>
-
-              <Button
-                variant={"primary"}
-                size={"md"}
-                onClick={async () => {
-                  try {
-                    const res = await writeAsync({
-                      // @ts-ignore
-                      from: address,
-                      args: [address],
-                      value: BigInt(0.02 * 10 ** 18),
-                    });
-                    if (res.hash) {
-                      toast.success(`Success ${res.hash}`);
-                    }
-
-                    console.log(res);
-                  } catch (e: any) {
-                    toast.error(e.details);
-                  }
-                }}
-              >
-                Donate
-              </Button>
             </div>
+          ) : (
+            <div>Connect your wallet to donate</div>
           )}
         </div>
       </div>

@@ -10,17 +10,18 @@ const TopDonationsCard = () => {
   const { data, isError, isLoading } = useContractRead({
     address: CONTACT_ADDRESS,
     abi: aby,
-    functionName: "getLastDonations",
+    functionName: "getTopArtistDonation",
+    args: ["0x19e6232E41815f70e959d54C11CfC267003215E9"],
   });
-
-  const donationsData = useMemo(
-    () =>
-      data &&
-      (data as DonationItemT[]).filter(
-        (item) => item.artistAddress === address
-      ),
-    [data]
-  );
+  console.log(data, "SADASD");
+  // const donationsData = useMemo(
+  //   () =>
+  //     data &&
+  //     (data as DonationItemT[]).filter(
+  //       (item) => item.artistAddress === address
+  //     ),
+  //   [data]
+  // );
 
   return (
     <div className={"flex flex-col"}>
@@ -30,12 +31,12 @@ const TopDonationsCard = () => {
           "flex flex-col bg-white p-10 pb-16 rounded-2.5xl border border-outline shadow-black-e3"
         }
       >
-        {donationsData?.map((item: DonationItemT, index: number) => (
-          <div key={index}>
-            {trimAddress(item.donor)} -{" "}
-            {(+item.amount.toString() / 10 ** 18).toString()} Matic
-          </div>
-        ))}
+        {/*{donationsData?.map((item: DonationItemT, index: number) => (*/}
+        {/*  <div key={index}>*/}
+        {/*    {trimAddress(item.donor)} -{" "}*/}
+        {/*    {(+item.amount.toString() / 10 ** 18).toString()} Matic*/}
+        {/*  </div>*/}
+        {/*))}*/}
       </div>
     </div>
   );
