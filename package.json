@@ -21,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/verbalius/musicmint/issues"
   },
-  "homepage": "https://github.com/verbalius/musicmint#readme"
+  "homepage": "https://github.com/verbalius/musicmint#readme",
+  "devDependencies": {
+    "prettier": "2.8.8"
+  },
+  "dependencies": {
+    "viem": "^0.3.22",
+    "wagmi": "^1.0.2"
+  }
 }
