@@ -1,5 +1,5 @@
 import { DonationItemT } from "../../types/types.ts";
-import { useAccount, useContractRead } from "wagmi";
+import { useContractRead } from "wagmi";
 import { CONTACT_ADDRESS } from "../../constants /address.ts";
 import { aby } from "../../../aby/aby.ts";
 import { trimAddress } from "../../helpers.ts";
@@ -9,13 +9,12 @@ import { useEffect } from "react";
 
 const TopDonationsCard = () => {
   const [currentStream] = useAtom(currentStreamAtom);
-  const { address } = useAccount();
 
-  const { data, isError, isLoading } = useContractRead({
+  const { data } = useContractRead({
     address: CONTACT_ADDRESS,
     abi: aby,
     functionName: "getLastDonations",
-    args: [currentStream?.name ? currentStream.name : "1"],
+    args: [currentStream?.name && currentStream.name],
     watch: true,
   });
 

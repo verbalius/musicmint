@@ -35,13 +35,13 @@ const Header = () => {
         "flex justify-between items-center bg-white pl-[33px] pr-[28px] py-[22px]"
       }
     >
-      <div className={"w-1/3"}>
+      <div className={"w-1/5"}>
         <img src={logo} alt={"logo"} height={66} width={256} />
       </div>
-      <div className={"w-1/3 flex justify-center"}>
+      <div className={"w-3/5 flex justify-center"}>
         <StreamCard />
       </div>
-      <div className={"w-1/3 flex justify-end"}>
+      <div className={"w-1/5 flex justify-end"}>
         <div className={"flex gap-2"}>
           {!isMetamaskInstalled ? (
             <Link to={"https://metamask.io/download/"}>Metamask link</Link>
