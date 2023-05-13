@@ -18,12 +18,14 @@ const STREAMING_SERVER_URL = 'http://127.0.0.1:8082'
 
 // Init IPFS Node
 const IPFSGateway = 'ipfs.io'
+const ipfs = IPFS.create();
 const infuraProjectId = process.env.INFURA_PROJECT_ID
 const infuraProjectSecret = process.env.INFURA_PROJECT_SECRET
 
 // Certificate connection init block
 const web3 = new Web3(new Web3.providers.HttpProvider('https://rpc-mumbai.maticvigil.com/'));
-const contractAddress = '0xCC5349505847010c66aA667E91da8d3Ab309470A';
+const web3_account = web3.eth.accounts.privateKeyToAccount(process.env.ETH_PRIVATE_KEY);
+const contractAddress = '0x0768d5fEA26a255525aa966331517074fD46c906';
 const abiData = fs.readFileSync('contractAbi.json', 'utf-8');
 const contractAbiJson = JSON.parse(abiData);
 const contract = new web3.eth.Contract(contractAbiJson, contractAddress);
@@ -48,14 +50,12 @@ async function main(streamID, artistName) {
     const recordingTimeSeconds = 10;
     const recordedAudioFilePath = await recordAudio(recordingTimeSeconds, `${STREAMING_SERVER_URL}/${artistName}/${streamID}.mp3`)
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
-    const contract_info = { '0': '0xb79a97118Ce74D7BB1F96d54E89b9207412F53d3', '1': '1' } //await contract.methods.getTopArtistDonation(streamID).call();
+    const contract_info = { '0': '0x380D9A31E1F139A6990c923B53514D90295BB07b', '1': '1' } //await contract.methods.getTopArtistDonation(streamID).call();
     if (contract_info['1'] == '0') {
         console.log('Nobody donated. Discarding recording: ' + recordedAudioFile);
     } else {
         const date = new Date();
         console.log('Uplading to IPFS: ', recordedAudioFilePath);
-        const ipfs = await IPFS.create();
-
         const audioFileOnIPFS = await ipfs.add(recordedAudioFile);
         const audioFileCid = audioFileOnIPFS.path;
         // await pinCidOnInfuraIPFS(infuraProjectId, infuraProjectSecret, audioFileCid);
@@ -75,6 +75,7 @@ async function main(streamID, artistName) {
                 "year": date.getUTCFullYear
             }
         }
+        console.log(metadataJSON);
         const metadataJSONSting = JSON.stringify(metadataJSON);
         const metadataFileBuffer = Buffer.from(metadataJSONSting);
         const metadataOnIPFS = await ipfs.add(metadataFileBuffer);
@@ -83,11 +84,39 @@ async function main(streamID, artistName) {
         // await pinCidOnInfuraIPFS(infuraProjectId, infuraProjectSecret, metadataOnIPFSCid);
         const metadataOnIPFSURL = `https://${IPFSGateway}/ipfs/${metadataOnIPFSCid}`;
 
+
         const NFTCreator = streamID;
         const NFTReceiver = contract_info['0'];
-        const mintingNFTResult = await contract.methods.mintNFT(NFTReceiver, metadataOnIPFSURL, NFTCreator).call();
+        console.log("Reciver:", NFTReceiver);
+        console.log("IPFS Url:", metadataOnIPFSURL);
+        console.log("Creator:", NFTCreator);
+
+        const mintingNFTResult = await contract.methods.mintNFT(NFTReceiver, metadataOnIPFSURL, NFTCreator).encodeABI();
+        const gasPrice = await web3.eth.getGasPrice();
+        const gasEstimate = await contract.methods.mintNFT(NFTReceiver, metadataOnIPFSURL, NFTCreator).estimateGas({ from: web3_account.address });;
+
+        const transaction = {
+            from: web3_account.address,
+            to: contractAddress,
+            data: mintingNFTResult,
+            gasPrice: gasPrice,
+            gas: gasEstimate
+        };
+
+        const signedTransaction = await web3.eth.accounts.signTransaction(transaction, process.env.ETH_PRIVATE_KEY);
+
+        web3.eth.sendSignedTransaction(signedTransaction.rawTransaction)
+            .on('transactionHash', (hash) => {
+                console.log('Transaction hash:', hash);
+            })
+            .on('receipt', (receipt) => {
+                console.log('Transaction receipt:', receipt);
+            })
+            .on('error', (error) => {
+                console.error('Error:', error);
+            });
     }
-    fs.rmSync(recordedAudioFilePath) || true;
+    fs.rmSync(recordedAudioFilePath);
 }
 
 async function recordAudio(recordingDurationSeconds, sourceURL) {
