@@ -11,6 +11,7 @@ import {
 import logo from "../../../assets/logo.png";
 import { Link } from "react-router-dom";
 import StreamCard from "../../stream-card/StreamCard.tsx";
+import { trimAddress } from "../../../helpers.ts";
 
 const Header = () => {
   const { address, isConnected } = useAccount();
@@ -51,11 +52,7 @@ const Header = () => {
               onClick={() => disconnect()}
               disabled={isLoading}
             >
-              Disconnect{" "}
-              {address &&
-                `${address.slice(0, 4)}....${address.slice(
-                  address.length - 4
-                )}`}
+              Disconnect {trimAddress(address)}
             </Button>
           ) : (
             <Button
