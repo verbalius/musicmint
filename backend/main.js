@@ -46,44 +46,32 @@ async function main(streamID, artistName) {
     if(contract_info['1'] == '0'){
         console.log('Nobody donated. Discarding recording: ' + recordedAudioFilePath);
     } else {
+        const date = new Date();
         console.log('Uplading to IPFS: ', audioFileCid);
         const audioFileCid = await uploadFileToIPFS(recordedAudioFilePath);
         await pinCidOnInfuraIPFS(infuraProjectId, infuraProjectSecret, audioFileCid);
 
         console.log('Starting to mint: ', recordedAudioFilePath);
         const imageForNFTURL = await getImageForNFTURL(artistName, streamID);
-        const jsonObject = {
-            "name": "artistName date stream",
-            "description": "This unique audio was captured during the DJ stream of artist",
-            "image": image,
+        const metadataJSON = {
+            "name": `${artistName} stream unique part #${audioFileCid}`,
+            "description": `This unique audio NFT was created during the DJ stream of artist on ${date.getUTCDate}`,
+            "image": imageForNFTURL,
             "audio": {
-              "file": `https://${IPFSGateway}/ipfs/`,
-              "title": "Sound of the Ocean",
+              "file": `https://${IPFSGateway}/ipfs/${audioFileCid}`,
+              "title": `${artistName} stream unique part ${date.getUTCDate}`,
               "artist": artistName,
               "duration": `00:00:${recordingTime}`,
               "genre": "Live Mix",
-              "year": date
+              "year": date.getUTCFullYear
             }
           }        
-          
-          // Convert JSON object to a JSON string
-          const jsonString = JSON.stringify(jsonObject);
-          
-          // Convert the JSON string to a Buffer
-          const fileBuffer = Buffer.from(jsonString);
-          
-          // Upload the file to IPFS
-          ipfs.add(fileBuffer, (err, result) => {
-            if (err) {
-              console.error('Error uploading JSON object to IPFS:', err);
-            } else {
-              const ipfsHash = result[0].hash;
-              console.log('JSON object uploaded successfully. IPFS hash:', ipfsHash);
-            }
-          });
+          const metadataJSONSting = JSON.stringify(metadata);
+          const metadataOnIPFSURL = `https://${IPFSGateway}/ipfs/${await uploadFileToIPFS(metadataJSONSting)}`;
+
         const NFTCreator = streamID;
         const NFTReceiver = contract_info['0'];
-        const mintingNFTResult = await contract.methods.mintNFT(NFTReceiver, mtd, NFTCreator).call();
+        const mintingNFTResult = await contract.methods.mintNFT(NFTReceiver, metadataOnIPFSURL, NFTCreator).call();
     }
     fs.rmSync(recordedAudioFilePath) || true;
 }
@@ -127,8 +115,7 @@ async function pinCidOnInfuraIPFS(projectId, projectSecret, CID){
     req.end();
 }
 
-async function getImageForNFTURL(artistName, streamID){
-    const date = new Date();
+async function getImageForNFTURL(artistName, streamID, date){
     const baseURL = "https://noun-api.com/beta/pfp?name=";
     const imageFormat = ".png";
     
