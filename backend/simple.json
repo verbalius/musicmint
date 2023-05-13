@@ -1,0 +1,14 @@
+{
+    "name": "Sound of the Ocean",
+    "description": "This unique audio track captures the soothing sound of the ocean waves.",
+    "image": "https://example.com/sound-of-the-ocean.jpg",
+    "audio": {
+      "file": "ipfs location",
+      "title": "Sound of the Ocean",
+      "artist": artist name,
+      "duration": "00:00:60",
+      "genre": "Live Mix",
+      "year": 2022
+    }
+  }
+  
