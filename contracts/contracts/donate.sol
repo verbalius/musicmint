@@ -8,20 +8,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract DonationContract is ERC721URIStorage, Ownable {
 
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
-
-    struct Creator {
-        address creatorAddress;
-    }
-
-    mapping(uint256 => Creator) public creators;
-
     struct Donation {
         address donor;
         uint256 amount;
         uint256 timestamp;
         address artistAddress;
+        bool claimed;
     }
 
     Donation[] public donations;
@@ -30,15 +22,16 @@ contract DonationContract is ERC721URIStorage, Ownable {
     struct NFT {
         address recipient;
         string metadataURI;
+        address artistAddress;
     }
 
     NFT[] public nfts;
 
     event DonationReceived(address indexed donor, uint256 amount, uint256 timestamp, address indexed artistAddress);
     event NFTMinted(uint256 tokenId, address recipient, string metadataURI, address creator);
+    event DonationClaimed(address indexed artistAddress, uint256 amount);
 
     constructor() ERC721("MusicMint", "MuMint") {}
-
 
     function donate(address _artistAddress) public payable {
         require(msg.value > 0, "Donation amount must be greater than 0");
@@ -48,20 +41,30 @@ contract DonationContract is ERC721URIStorage, Ownable {
         newDonation.amount = msg.value;
         newDonation.timestamp = block.timestamp;
         newDonation.artistAddress = _artistAddress;
+        newDonation.claimed = false;
 
         donations.push(newDonation);
 
         emit DonationReceived(newDonation.donor, newDonation.amount, newDonation.timestamp, newDonation.artistAddress);
     }
 
-    function getLastDonations() public view returns (Donation[] memory) {
-        uint256 count = donations.length;
-        uint256 resultLength = count > 10 ? 10 : count;
+    function getLastDonations(address artistAddress) public view returns (Donation[] memory) {
+        uint256 donationsCount = 0;
+    
+        for (uint256 i = 0; i < donations.length; i++) {
+            if (donations[i].artistAddress == artistAddress) {
+                donationsCount++;
+            }
+        }
 
-        Donation[] memory lastDonations = new Donation[](resultLength);
+        Donation[] memory lastDonations = new Donation[](donationsCount);
 
-        for (uint256 i = 0; i < resultLength; i++) {
-            lastDonations[i] = donations[count - resultLength + i];
+        uint256 index = 0;
+        for (uint256 i = 0; i < donations.length; i++) {
+            if (donations[i].artistAddress == artistAddress) {
+                lastDonations[index] = donations[i];
+                index++;
+            }
         }
 
         return lastDonations;
@@ -97,6 +100,7 @@ contract DonationContract is ERC721URIStorage, Ownable {
         NFT memory newNFT;
         newNFT.recipient = recipient;
         newNFT.metadataURI = metadataURI;
+        newNFT.artistAddress = creator;
         nfts.push(newNFT);
 
         totalSupply++;
@@ -104,8 +108,45 @@ contract DonationContract is ERC721URIStorage, Ownable {
         emit NFTMinted(tokenId, recipient, metadataURI, creator);
     }
 
-    function getNFTs() external view returns (NFT[] memory) {
-        return nfts;
+    function getNFTs(address artistAddress) public view returns (NFT[] memory) {
+        uint256 artistNFTCount = 0;
+
+        for (uint256 i = 0; i < nfts.length; i++) {
+            if (nfts[i].artistAddress == artistAddress) {
+                artistNFTCount++;
+            }
+        }
+
+        NFT[] memory artistNFTs = new NFT[](artistNFTCount);
+
+        uint256 index = 0;
+        for (uint256 i = 0; i < nfts.length; i++) {
+            if (nfts[i].artistAddress == artistAddress) {
+                artistNFTs[index] = nfts[i];
+                index++;
+            }
+        }
+
+        return artistNFTs;
+    }
+
+    function claim(address _artistAddress) public {
+        require(_artistAddress != address(0), "Invalid artist address");
+
+        uint256 totalClaimed = 0;
+
+        for (uint256 i = 0; i < donations.length; i++) {
+            if (donations[i].artistAddress == _artistAddress && !donations[i].claimed) {
+                totalClaimed += donations[i].amount;
+                donations[i].claimed = true;
+            }
+        }
+
+        require(totalClaimed > 0, "No donations to claim");
+
+        payable(_artistAddress).transfer(totalClaimed);
+
+        emit DonationClaimed(_artistAddress, totalClaimed);
     }
 
 }
