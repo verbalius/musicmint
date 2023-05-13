@@ -49,7 +49,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
           ))}
       </div>
-      <div className={"px-3"}>Footer</div>
+      <div className={"pt-2 mt-4 px-3 border-t border-[#49536E] text-end"}>
+        Musicmint 2023
+      </div>
     </div>
   );
 };

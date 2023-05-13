@@ -33,19 +33,24 @@ const TopDonationsCard = () => {
           )}
           {data &&
             currentStream &&
-            (data as any).map((item: DonationItemT, index: number) => (
-              <div
-                key={index}
-                className={
-                  "flex flex-col py-6 px-4 border border-[#598CF4] rounded-md"
-                }
-              >
-                <h4 className={"text-xs font-semibold"}>
-                  {(+item.amount.toString() / 10 ** 18).toString()} Matic
-                </h4>
-                <p className={"text-[10px] text-[#49536E]"}>{item.donor}</p>
-              </div>
-            ))}
+            (data as any)
+              .sort(
+                (a: DonationItemT, b: DonationItemT) =>
+                  +b.amount.toString() - +a.amount.toString()
+              )
+              .map((item: DonationItemT, index: number) => (
+                <div
+                  key={index}
+                  className={
+                    "flex flex-col py-6 px-4 border border-[#598CF4] rounded-md"
+                  }
+                >
+                  <h4 className={"text-xs font-semibold"}>
+                    {(+item.amount.toString() / 10 ** 18).toString()} Matic
+                  </h4>
+                  <p className={"text-[10px] text-[#49536E]"}>{item.donor}</p>
+                </div>
+              ))}
         </div>
       </div>
     </div>
