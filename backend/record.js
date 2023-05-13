@@ -1,16 +1,14 @@
-const fs = require('fs');
-const ffmpeg = require('fluent-ffmpeg');
-
-function recordFLVStream(recordingDuration = 10, url) {
-    const outputFilename = 'output.aac';
+async function recordAudio(recordingDurationSeconds = 10, sourceURL) {
+    const ffmpeg = require('fluent-ffmpeg');
+    const uuid = require('uuid');
+    const outputFilePath = 'records/' + uuid.v4() + '.aac';
     ffmpeg(url)
         .noVideo()
-        .audioChannels(1)
+        .audioChannels(2)
         .audioBitrate(128)
         .duration(recordingDuration)
-        .on('end', function() { console.log('saved'); })
-        .on('error', function(err) { console.log('error'); })
-        .save(outputFilename);
+        .on('end', function () { console.log('saved!'); })
+        .on('error', function (err) { console.log('error: ', err); })
+        .save(outputFilePath);
+    return outputFilePath;
 }
-
-recordFLVStream(10, "http://127.0.0.1:8080/live/livestream.aac")

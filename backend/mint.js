@@ -1,15 +1,17 @@
-const IPFS = require('ipfs-http-client');
-const fs = require('fs');
+const Web3 = require('web3');
+const contract_info = require('./contract_info.js');
+const record = require('./record.js');
+const ipfs = require('./ipfs.js');
 
-async function uploadFileToIPFS(filePath) {
-  const ipfs = await IPFS.create({ host: 'localhost', port: '5001', protocol: 'http' });
-  const fileContent = fs.readFileSync(filePath);
-  const filesAdded = await ipfs.add(fileContent);
-  const ipfsLink = `https://ipfs.io/ipfs/${filesAdded.cid}`;
-  console.log(`File uploaded to IPFS at: ${ipfsLink}`);
+async function mintNFTFor(artistID,) {
+    const sourceURL = `http://127.0.0.1:8080/live/${artistID}.aac`
+    const recordedAudioFilePath = await record.recordAudio(recordingDurationSeconds = 10, sourceURL);
+    
+    
+    ipfs.
 }
 
-uploadFileToIPFS('test.wav');
+await mintNFTFor(lolkek);
 
 // const web3 = new Web3('https://rpc-mumbai.maticvigil.com');
 
