@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { trimAddress } from "../../helpers.ts";
 
 const NftListItem = ({ link, address }: { link: string; address: string }) => {
-  console.log("Link", link);
   const [imageLink, setImageLink] = useState<null | string>(null);
 
   useEffect(() => {
@@ -14,7 +13,7 @@ const NftListItem = ({ link, address }: { link: string; address: string }) => {
             ? `https://${link.slice(7)}.ipfs.nftstorage.link`
             : link
         );
-        console.log(data, "DATA LIST ITEM");
+
         if (data?.image) {
           setImageLink(`https://${data.image.slice(7)}.ipfs.nftstorage.link`);
         }
