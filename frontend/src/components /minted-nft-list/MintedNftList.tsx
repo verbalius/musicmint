@@ -64,7 +64,7 @@ const TopDonationsCard = () => {
               .map((item: NftItemT) => {
                 return (
                   <NftListItem
-                    address={item.artistAddress}
+                    address={item.recipient}
                     link={item?.metadataURI.toString()}
                     key={item.metadataURI}
                   />
