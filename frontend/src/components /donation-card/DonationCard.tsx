@@ -47,7 +47,7 @@ const DonationCard = () => {
           eligible to win a 1-minute stream NFT which comes with a unique Nouns
           avatar.
         </p>
-        <p className={"text-xs text-dark-gray-400"}>Pool Name</p>
+        <p className={"text-xs text-dark-gray-400"}>Network name</p>
         <div className={"flex gap-2 mb-16"}>
           <img src={PolygonIcon} alt={"polygon_icon"} />
           <h5 className={"text-lg font-semibold"}>POLYGON (MATIC)</h5>
@@ -81,8 +81,6 @@ const DonationCard = () => {
                       if (res.hash) {
                         toast.success(`Success ${res.hash}`);
                       }
-
-                      console.log(res);
                     } catch (e: any) {
                       toast.error(e.details);
                     }
