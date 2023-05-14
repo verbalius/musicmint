@@ -31,8 +31,8 @@ const StreamCard = () => {
   }, [currentStream]);
 
   useEffect(() => {
-    if (playerRef) {
-      playerRef.current.reload();
+    if (playerRef.current) {
+      playerRef.current.load();
     }
   }, [streamLink]);
 
