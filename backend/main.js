@@ -10,7 +10,7 @@ const uuid = require('uuid');
 const axios = require('axios');
 
 // Global Vars
-const recordingDuration = 55; //seconds
+const recordingDuration = 59; //seconds
 const STREAMING_API_URL = process.env.STREAMING_API_URL;
 const STREAMING_SERVER_URL = process.env.STREAMING_SERVER_URL;
 const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
