@@ -23,7 +23,9 @@ const StreamCard = () => {
   useEffect(() => {
     if (currentStream) {
       setStreamLink(
-        `http://localhost:8082/${currentStream.app}/${currentStream.name}.mp3`
+        `${import.meta.env.VITE_STREAM_URL}/${currentStream.app}/${
+          currentStream.name
+        }.mp3`
       );
     }
   }, [currentStream]);
