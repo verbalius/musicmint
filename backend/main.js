@@ -10,7 +10,7 @@ const uuid = require('uuid');
 const axios = require('axios');
 
 // Global Vars
-const cycleTime = 45; //seconds
+const recordingDuration = 45; //seconds
 const STREAMING_API_URL = 'http://127.0.0.1:1985';
 const STREAMING_SERVER_URL = 'http://127.0.0.1:8082';
 const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
@@ -23,7 +23,7 @@ const abiData = fs.readFileSync('contractAbi.json', 'utf-8');
 const contractAbiJson = JSON.parse(abiData);
 const contract = new web3.eth.Contract(contractAbiJson, contractAddress);
 
-console.log(new Date(), `Starting cycling every ${cycleTime}th second of the minute.`);
+console.log(new Date(), `Starting cycling every minute, recording ${recordingDuration}.`);
 const streamingInfoURL = `${STREAMING_API_URL}/api/v1/streams`;
 
 const job = schedule.scheduleJob('*/1 * * * *', ()=>{entrypoint();});
@@ -48,7 +48,7 @@ async function main(streamID, artistName) {
     console.log(streamID, artistName);
     const date = new Date();
     console.log(date);
-    const recordingTimeSeconds = cycleTime;
+    const recordingTimeSeconds = recordingDuration;
     const recordedAudioFilePath = await recordAudio(recordingTimeSeconds, `${STREAMING_SERVER_URL}/${artistName}/${streamID}.mp3`)
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
     const contract_info = await contract.methods.getTopArtistDonation(streamID).call();
