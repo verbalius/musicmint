@@ -9,7 +9,10 @@ export const trimAddress = (address?: string) => {
   return `${address.slice(0, 4)}....${address.slice(address.length - 4)}`;
 };
 
-export function getImageUrl(artistName: string) {
+export function getImageUrl(artistName?: string) {
+  if (!artistName) {
+    return;
+  }
   const date = new Date();
   const baseURL = "https://noun-api.com/beta/pfp?name=";
   const imageFormat = ".png";
