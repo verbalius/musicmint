@@ -11,8 +11,8 @@ services:
       - 1935:1935 # stream
       - 1985:1985 # api
       - 8082:8080 # http ui
-  # backend:
-  #   build: ../backend/Dockerfile
+  backend:
+    build: ../backend/Dockerfile
   # frontend:
   #   image: node:20
   #   command: ["yarn", "dev"]

@@ -10,7 +10,7 @@ const uuid = require('uuid');
 const axios = require('axios');
 
 // Global Vars
-const cycleTime = 30; //seconds
+const cycleTime = 45; //seconds
 const STREAMING_API_URL = 'http://127.0.0.1:1985';
 const STREAMING_SERVER_URL = 'http://127.0.0.1:8082';
 const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
@@ -26,10 +26,11 @@ const contract = new web3.eth.Contract(contractAbiJson, contractAddress);
 console.log(new Date(), `Starting cycling every ${cycleTime}th second of the minute.`);
 const streamingInfoURL = `${STREAMING_API_URL}/api/v1/streams`;
 
-entrypoint();
-setInterval(()=>{entrypoint();}, 60000);
+const job = schedule.scheduleJob('*/1 * * * *', ()=>{entrypoint();});
+job.schedule()
 
-async function entrypoint(){
+async function entrypoint() {
+    console.log('Cycle');
     let data = '';
     request.get(streamingInfoURL, async function (error, response, body) {
         if (!error && response.statusCode == 200) {
@@ -45,6 +46,8 @@ async function entrypoint(){
 
 async function main(streamID, artistName) {
     console.log(streamID, artistName);
+    const date = new Date();
+    console.log(date);
     const recordingTimeSeconds = cycleTime;
     const recordedAudioFilePath = await recordAudio(recordingTimeSeconds, `${STREAMING_SERVER_URL}/${artistName}/${streamID}.mp3`)
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
@@ -52,7 +55,6 @@ async function main(streamID, artistName) {
     if (contract_info['1'] == '0') {
         console.log('Nobody donated. Discarding recording: ' + recordedAudioFilePath);
     } else {
-        const date = new Date();
         //
         // Uploading the juice
         //
@@ -149,6 +151,7 @@ async function getImageForNFTURL(artistName, streamID, date) {
     const minute = date.getMinutes().toString().padStart(2, '0');
 
     const imageOriginUrl = baseURL + artistName + year + month + day + hour + minute + imageFormat;;
+    console.log(imageOriginUrl);
     const response = await axios.get(imageOriginUrl, { responseType: 'arraybuffer' });
     return response.data;
 }
