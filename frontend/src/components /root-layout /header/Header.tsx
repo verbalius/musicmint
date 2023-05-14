@@ -9,8 +9,9 @@ import {
 } from "wagmi";
 
 import logo from "../../../assets/logo.png";
-import { Link } from "react-router-dom";
+
 import StreamCard from "../../stream-card/StreamCard.tsx";
+import { trimAddress } from "../../../helpers.ts";
 
 const Header = () => {
   const { address, isConnected } = useAccount();
@@ -34,16 +35,18 @@ const Header = () => {
         "flex justify-between items-center bg-white pl-[33px] pr-[28px] py-[22px]"
       }
     >
-      <div className={"w-1/3"}>
+      <div className={"w-1/5"}>
         <img src={logo} alt={"logo"} height={66} width={256} />
       </div>
-      <div className={"w-1/3 flex justify-center"}>
+      <div className={"w-3/5 flex justify-center"}>
         <StreamCard />
       </div>
-      <div className={"w-1/3 flex justify-end"}>
+      <div className={"w-1/5 flex justify-end"}>
         <div className={"flex gap-2"}>
           {!isMetamaskInstalled ? (
-            <Link to={"https://metamask.io/download/"}>Metamask link</Link>
+            <a href={"https://metamask.io/download/"}>
+              Install Metamask to connect
+            </a>
           ) : isConnected ? (
             <Button
               variant={"bordered"}
@@ -51,11 +54,7 @@ const Header = () => {
               onClick={() => disconnect()}
               disabled={isLoading}
             >
-              Disconnect{" "}
-              {address &&
-                `${address.slice(0, 4)}....${address.slice(
-                  address.length - 4
-                )}`}
+              Disconnect {trimAddress(address)}
             </Button>
           ) : (
             <Button

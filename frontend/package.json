@@ -11,12 +11,16 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.14",
-    "ethers": "^5.7.2",
+    "axios": "^1.4.0",
+    "dayjs": "^1.11.7",
+    "jotai": "^2.1.0",
     "postcss": "^8.4.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.1",
     "react-toastify": "^9.1.2",
+    "swr": "^2.1.5",
+    "viem": "^0.3.24",
     "wagmi": "^1.0.2"
   },
   "devDependencies": {

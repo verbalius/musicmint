@@ -1,0 +1,10 @@
+.input {
+    -webkit-appearance: none !important;
+    margin: 0;
+    @apply w-full outline-none focus:outline-none text-center bg-transparent font-semibold hover:text-black focus:text-black flex items-center text-gray-700  outline-none
+}
+.input::-webkit-inner-spin-button,
+.input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

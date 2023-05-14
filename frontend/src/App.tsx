@@ -5,7 +5,9 @@ import { polygonMumbai } from "@wagmi/core/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { publicProvider } from "wagmi/providers/public";
 import { ToastContainer } from "react-toastify";
+import { Provider, atom } from "jotai";
 import "react-toastify/dist/ReactToastify.css";
+import { StreamT } from "./types/types.ts";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [polygonMumbai],
@@ -19,15 +21,19 @@ const config = createConfig({
   webSocketPublicClient,
 });
 
+export const currentStreamAtom = atom<null | StreamT>(null);
+
 function App() {
   return (
     <>
-      <ToastContainer />{" "}
-      <WagmiConfig config={config}>
-        <RootLayout>
-          <MainPage />
-        </RootLayout>
-      </WagmiConfig>
+      <Provider>
+        <ToastContainer />
+        <WagmiConfig config={config}>
+          <RootLayout>
+            <MainPage />
+          </RootLayout>
+        </WagmiConfig>
+      </Provider>
     </>
   );
 }
