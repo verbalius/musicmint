@@ -69,15 +69,48 @@ async function main(streamID, artistName) {
             "name": `${artistName} stream unique part #${audioFileCid}`,
             "description": `This unique audio NFT was created during the DJ stream of artist ${artistName}`,
             "image": `ipfs://${imageForNFTCid}`,
-            "audio": {
-                "file": `ipfs://${audioFileCid}`,
-                "title": `${artistName} stream unique part #${audioFileCid}`,
-                "artist": artistName,
-                "duration": `00:00:${recordingTimeSeconds}`,
-                "genre": "Live Mix",
-                "year": date.getUTCFullYear
+            "version": "1",
+            "title": `${artistName} stream unique part #${audioFileCid}`,
+            "artist": artistName,
+            "duration": 1,
+            "mimeType": "audio/mp3",
+            "losslessAudio": `ipfs://${audioFileCid}`,
+            "trackNumber": 1,
+            "license": "CC0",
+            "locationCreated": "WEB 3",
+            "external_url": `ipfs://${audioFileCid}`,
+            "animation_url": `ipfs://${audioFileCid}`,
+            "project": {
+            "title": `${artistName} stream unique part #${audioFileCid}`,
+            "artwork": {
+            "uri": `ipfs://${audioFileCid}`,
+            "mimeType": "dnb_logo/png",
+            "nft": "nft"
+            },
+            "description": `This unique audio NFT was created during the DJ stream of artist ${artistName}`,
+            "type": "nft",
+            "originalReleaseDate": "05-13-2023",
+            "recordLabel": "MusicMint",
+            "publisher": "MusicMint",
+            "upc": "03600029145"
+            },
+            "isrc": "CC-XXX-YY-NNNNN",
+            "artwork": {
+            "uri": `ipfs://${audioFileCid}`,
+            "mimeType": "audio/mp3",
+            "nft": "music nfts"
+            },
+            "lyrics": {
+            "text": "Nft",
+            "nft": "nft"
+            },
+            "visualizer": {
+            "uri": `ipfs://${audioFileCid}`,
+            "mimeType": "audio/mp3",
+            "nft": "music nfts"
             }
         }
+
         const metadataJSONSting = JSON.stringify(metadataJSON);
         const metadataFileBuffer = Buffer.from(metadataJSONSting);
         const metadataIPFSCid = await uploadToNFTStorage(metadataFileBuffer, 'applicaton/json');
