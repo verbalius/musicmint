@@ -11,8 +11,8 @@ const axios = require('axios');
 
 // Global Vars
 const recordingDuration = 45; //seconds
-const STREAMING_API_URL = 'http://127.0.0.1:1985';
-const STREAMING_SERVER_URL = 'http://127.0.0.1:8082';
+const STREAMING_API_URL = process.env.STREAMING_API_URL;
+const STREAMING_SERVER_URL = process.env.STREAMING_SERVER_URL;
 const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
 
 // Certificate connection init block
