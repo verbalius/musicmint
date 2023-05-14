@@ -197,6 +197,12 @@
 				"internalType": "address",
 				"name": "creator",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
 			}
 		],
 		"name": "NFTMinted",
@@ -507,6 +513,11 @@
 						"internalType": "address",
 						"name": "artistAddress",
 						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct DonationContract.NFT[]",
@@ -602,6 +613,11 @@
 				"internalType": "address",
 				"name": "artistAddress",
 				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",

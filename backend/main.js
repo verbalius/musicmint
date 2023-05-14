@@ -18,7 +18,7 @@ const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
 // Certificate connection init block
 const web3 = new Web3(new Web3.providers.HttpProvider('https://rpc-mumbai.maticvigil.com/'));
 const web3_account = web3.eth.accounts.privateKeyToAccount(process.env.ETH_PRIVATE_KEY);
-const contractAddress = '0x3387e03196511F0EDb0F980f3ecf074a95686777';
+const contractAddress = '0x56f0312E3a3ef06C6b085c952c497B719d268e65';
 const abiData = fs.readFileSync('contractAbi.json', 'utf-8');
 const contractAbiJson = JSON.parse(abiData);
 const contract = new web3.eth.Contract(contractAbiJson, contractAddress);
@@ -50,7 +50,7 @@ async function main(streamID, artistName) {
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
     const contract_info = await contract.methods.getTopArtistDonation(streamID).call();
     if (contract_info['1'] == '0') {
-        console.log('Nobody donated. Discarding recording: ' + recordedAudioFile);
+        console.log('Nobody donated. Discarding recording: ' + recordedAudioFilePath);
     } else {
         const date = new Date();
         //
