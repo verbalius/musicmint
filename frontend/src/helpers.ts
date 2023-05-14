@@ -36,8 +36,6 @@ export function isWithinLastMinute(timestamp: string, now: Dayjs): boolean {
   const startOfCurrentMinute: Dayjs = now.startOf("minute");
   const endOfCurrentMinute: Dayjs = now.endOf("minute");
 
-  console.log(minuteAgo);
-
   return (
     (timestampDate.isSameOrAfter(startOfCurrentMinute) &&
       timestampDate.isBefore(endOfCurrentMinute)) ||

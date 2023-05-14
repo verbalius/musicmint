@@ -34,4 +34,5 @@ export type NftItemT = {
   recipient: string;
   metadataURI: string;
   artistAddress: string;
+  timestamp: BigInt;
 };
