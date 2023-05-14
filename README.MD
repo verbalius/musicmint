@@ -1,0 +1,2 @@
+Smart contract deployed to Polygon PoS Mumbai Testnet: https://mumbai.polygonscan.com/address/0x56f0312E3a3ef06C6b085c952c497B719d268e65
+Tweet about our SC deployment: https://twitter.com/HorbalYurii/status/1657560511179784192
