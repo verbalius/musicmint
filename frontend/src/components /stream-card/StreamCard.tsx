@@ -30,6 +30,12 @@ const StreamCard = () => {
     }
   }, [currentStream]);
 
+  useEffect(() => {
+    if (playerRef) {
+      playerRef.current.reload();
+    }
+  }, [streamLink]);
+
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handlePlayerClick = () => {
