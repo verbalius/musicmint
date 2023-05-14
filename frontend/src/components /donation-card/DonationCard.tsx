@@ -43,8 +43,9 @@ const DonationCard = () => {
           </h4>
         </div>
         <p className={"mb-6 text-highlight-500"}>
-          These NFTs, created on the blockchain, hold unique value and can
-          represent digital artwork, collectibles, and more.
+          By allocating the desired amount into this matic poll, you are getting
+          eligible to win a 1-minute stream NFT which comes with a unique Nouns
+          avatar.
         </p>
         <p className={"text-xs text-dark-gray-400"}>Pool Name</p>
         <div className={"flex gap-2 mb-16"}>
