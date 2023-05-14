@@ -32,6 +32,7 @@ const TopDonationsCard = () => {
       data &&
       currentStream &&
       (data as any)
+        .slice()
         .sort(
           (a: DonationItemT, b: DonationItemT) =>
             +b.amount.toString() - +a.amount.toString()
@@ -40,7 +41,8 @@ const TopDonationsCard = () => {
           const date1 = dayjs(+item.timestamp.toString() * 1000);
           const date2 = dayjs().set("seconds", 0);
           return date1 > date2;
-        }),
+        })
+        .slice(0, 3),
     [secondsLeft, data]
   );
 

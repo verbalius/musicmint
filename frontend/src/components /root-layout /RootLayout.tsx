@@ -34,8 +34,8 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             <div
               className={`py-8 px-10 bg-white rounded-xl border border-[#CACDD5] font-semibold ${
                 currentStream?.id === stream.id
-                  ? "bg-blue-700 text-white"
-                  : "cursor-pointer bg-transparent text-black"
+                  ? "underline"
+                  : "cursor-pointer bg-transparent"
               }`}
               key={stream.id}
               onClick={() => {
