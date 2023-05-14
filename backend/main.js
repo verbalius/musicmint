@@ -45,7 +45,7 @@ async function entrypoint() {
 }
 
 async function main(streamID, artistName) {
-    console.log(streamID, artistName);
+    console.log("StreamID:",streamID,"ArtistName:",artistName);
     const date = new Date();
     console.log(date);
     const recordingTimeSeconds = recordingDuration;
@@ -160,10 +160,8 @@ async function recordAudio(recordingDurationSeconds, sourceURL) {
             .audioChannels(2)
             .audioBitrate(128)
             .duration(recordingDurationSeconds)
-            .on('progress', function (progress) {
-                console.log('Processing: ' + progress.percent + '% done');
-            })
             .on('end', () => {
+                console.log('Recorded!',outputFilePath);
                 resolve(outputFilePath);
             })
             .on('error', (err) => {
