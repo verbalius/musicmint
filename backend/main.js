@@ -4,55 +4,43 @@ const Web3 = require('web3');
 const schedule = require('node-schedule');
 const request = require('request');
 const https = require('https');
-const path = require('path');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const uuid = require('uuid');
-const fetch = require('node-fetch');
-const { Readable } = require('stream');
-
-const { NFTStorage, File, Blob } = require('nft.storage')
-
-
+const axios = require('axios');
 
 // Global Vars
-const STREAMING_API_URL = 'http://127.0.0.1:1985'
-const STREAMING_SERVER_URL = 'http://127.0.0.1:8082'
-
-// const mainPath = path.join(__dirname, '..', process.env.npm_package_main);
-
-// Init IPFS Node
+const cycleTime = 60; //seconds
+const STREAMING_API_URL = 'http://127.0.0.1:1985';
+const STREAMING_SERVER_URL = 'http://127.0.0.1:8082';
 const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
-const nft_storage_client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
-const infuraProjectId = process.env.INFURA_PROJECT_ID
-const infuraProjectSecret = process.env.INFURA_PROJECT_SECRET
 
 // Certificate connection init block
 const web3 = new Web3(new Web3.providers.HttpProvider('https://rpc-mumbai.maticvigil.com/'));
 const web3_account = web3.eth.accounts.privateKeyToAccount(process.env.ETH_PRIVATE_KEY);
-const contractAddress = '0x0768d5fEA26a255525aa966331517074fD46c906';
+const contractAddress = '0x3387e03196511F0EDb0F980f3ecf074a95686777';
 const abiData = fs.readFileSync('contractAbi.json', 'utf-8');
 const contractAbiJson = JSON.parse(abiData);
 const contract = new web3.eth.Contract(contractAbiJson, contractAddress);
 
-// const scheduleRule = new schedule.RecurrenceRule();
-// scheduleRule.second = 5;
-// schedule.scheduleJob(scheduleRule, function(){
-const url = `${STREAMING_API_URL}/api/v1/streams`;
-request.get(url, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-        const data = JSON.parse(body);
-        data.streams.forEach(element => {
-            main(element.name, element.app);
-        });
-    } else {
-        console.error(error);
-    }
-});
-// });
+console.log(new Date(), `Starting cycling every ${cycleTime}th second of the minute.`);
+const streamingInfoURL = `${STREAMING_API_URL}/api/v1/streams`;
+let data = '';
+setInterval(() => {
+    request.get(streamingInfoURL, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            data = JSON.parse(body);
+            data.streams.forEach(element => {
+                main(element.name, element.app);
+            });
+        } else {
+            console.error(error);
+        }
+    })
+}, cycleTime);
 
 async function main(streamID, artistName) {
-    const recordingTimeSeconds = 10;
+    const recordingTimeSeconds = cycleTime;
     const recordedAudioFilePath = await recordAudio(recordingTimeSeconds, `${STREAMING_SERVER_URL}/${artistName}/${streamID}.mp3`)
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
     const contract_info = { '0': '0x380D9A31E1F139A6990c923B53514D90295BB07b', '1': '1' } //await contract.methods.getTopArtistDonation(streamID).call();
@@ -60,56 +48,46 @@ async function main(streamID, artistName) {
         console.log('Nobody donated. Discarding recording: ' + recordedAudioFile);
     } else {
         const date = new Date();
-        // console.log('Uplading to IPFS: ', recordedAudioFilePath);
-        // const audioFileOnIPFS = await ipfs.add(recordedAudioFile);
-        // const audioFileCid = audioFileOnIPFS.path;
-        // //await pinCidOnInfuraIPFS(infuraProjectId, infuraProjectSecret, audioFileCid);
-
-        // console.log('Starting to mint: ', recordedAudioFile);
-        // const imageForNFTURL = await getImageForNFTURL(artistName, streamID, date);
-        // const metadataJSON = {
-        //     "name": `${artistName} stream unique part #${audioFileCid}`,
-        //     "description": `This unique audio NFT was created during the DJ stream of artist on ${date.getUTCDate}`,
-        //     "image": imageForNFTURL,
-        //     "audio": {
-        //         "file": `https://${IPFSGateway}/ipfs/${audioFileCid}`,
-        //         "title": `${artistName} stream unique part ${date.getUTCDate}`,
-        //         "artist": artistName,
-        //         "duration": `00:00:${recordingTimeSeconds}`,
-        //         "genre": "Live Mix",
-        //         "year": date.getUTCFullYear
-        //     }
-        // }
-        const imageForNFT = await getImageForNFTURL(artistName, streamID, date);
-        const nftMetadata = await nft_storage_client.store({
-            name: `${artistName} stream unique part ${date.getUTCDate}`,
-            description: `This unique audio NFT was created during the DJ stream of artist on ${date.getUTCDate}`,
-            image: new File([imageForNFT], 'nft.png', { type: 'image/png' })
-
-        })
-        console.log(nftMetadata);
-        // const metadataJSONSting = JSON.stringify(metadataJSON);
-        // const metadataFileBuffer = Buffer.from(metadataJSONSting);
-        // const metadataOnIPFS = await ipfs.add(metadataFileBuffer);
-        // const metadataOnIPFSCid = metadataOnIPFS.path;
-        // // infura is experiencing downtimes
-        // // await pinCidOnInfuraIPFS(infuraProjectId, infuraProjectSecret, metadataOnIPFSCid);
-        // const metadataOnIPFSURL = `https://${IPFSGateway}/ipfs/${metadataOnIPFSCid}`;
-
-
+        //
+        // Uploading the juice
+        //
+        const audioFileCid = await uploadToNFTStorage(recordedAudioFile, 'audio/mp3');
 
         //
-        // MINTING
+        // Baking the metadata
+        //
+        const imageForNFT = await getImageForNFTURL(artistName, streamID, date);
+        const imageForNFTCid = await uploadToNFTStorage(imageForNFT, 'image/svg+xml');
+        const metadataJSON = {
+            "name": `${artistName} stream unique part #${audioFileCid}`,
+            "description": `This unique audio NFT was created during the DJ stream of artist ${artistName}`,
+            "image": `ipfs://${imageForNFTCid}`,
+            "audio": {
+                "file": `ipfs://${audioFileCid}`,
+                "title": `${artistName} stream unique part #${audioFileCid}`,
+                "artist": artistName,
+                "duration": `00:00:${recordingTimeSeconds}`,
+                "genre": "Live Mix",
+                "year": date.getUTCFullYear
+            }
+        }
+        const metadataJSONSting = JSON.stringify(metadataJSON);
+        const metadataFileBuffer = Buffer.from(metadataJSONSting);
+        const metadataIPFSCid = await uploadToNFTStorage(metadataFileBuffer, 'applicaton/json');
+        const metadataIPFSUrl = `ipfs://${metadataIPFSCid}`;
+
+        //
+        // Minting
         // 
         const NFTCreator = streamID;
         const NFTReceiver = contract_info['0'];
         console.log("Reciver:", NFTReceiver);
-        console.log("Metadata IPFS Url:", nftMetadata.url);
+        console.log("Metadata IPFS Url:", metadataIPFSUrl);
         console.log("Creator:", NFTCreator);
 
-        const mintingNFTResult = await contract.methods.mintNFT(NFTReceiver, nftMetadata.url, NFTCreator).encodeABI();
+        const mintingNFTResult = await contract.methods.mintNFT(NFTReceiver, metadataIPFSUrl, NFTCreator).encodeABI();
         const gasPrice = await web3.eth.getGasPrice();
-        const gasEstimate = await contract.methods.mintNFT(NFTReceiver, nftMetadata.url, NFTCreator).estimateGas({ from: web3_account.address });;
+        const gasEstimate = await contract.methods.mintNFT(NFTReceiver, metadataIPFSUrl, NFTCreator).estimateGas({ from: web3_account.address });;
 
         const transaction = {
             from: web3_account.address,
@@ -118,9 +96,7 @@ async function main(streamID, artistName) {
             gasPrice: gasPrice,
             gas: gasEstimate
         };
-
         const signedTransaction = await web3.eth.accounts.signTransaction(transaction, process.env.ETH_PRIVATE_KEY);
-
         web3.eth.sendSignedTransaction(signedTransaction.rawTransaction)
             .on('transactionHash', (hash) => {
                 console.log('Transaction hash:', hash);
@@ -153,26 +129,6 @@ async function recordAudio(recordingDurationSeconds, sourceURL) {
     });
 }
 
-async function pinCidOnInfuraIPFS(projectId, projectSecret, CID) {
-    const options = {
-        host: 'ipfs.infura.io',
-        port: 5001,
-        path: `/api/v0/pin/add?arg=${CID}`,
-        method: 'POST',
-        auth: projectId + ':' + projectSecret,
-    };
-    return new Promise((resolve) => {
-        let data = ''
-        https.request(options, res => {
-            res.on('data', chunk => { data += chunk })
-            res.on('end', () => {
-                console.log("Pinned on infura: ", body);
-                resolve();
-            })
-        })
-    })
-}
-
 async function getImageForNFTURL(artistName, streamID, date) {
     const baseURL = "https://noun-api.com/beta/pfp?name=";
     const imageFormat = ".png";
@@ -183,10 +139,17 @@ async function getImageForNFTURL(artistName, streamID, date) {
     const hour = date.getHours().toString().padStart(2, '0');
     const minute = date.getMinutes().toString().padStart(2, '0');
 
-    const imageOriginUrl = baseURL + artistName + streamID + year + month + day + hour + minute + imageFormat;
-    
-    const axios = require('axios');
-
-    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    const imageOriginUrl = baseURL + artistName + year + month + day + hour + minute + imageFormat;;
+    const response = await axios.get(imageOriginUrl, { responseType: 'arraybuffer' });
     return response.data;
+}
+
+async function uploadToNFTStorage(fileData, contentType) {
+    const nftStorageResponse = await axios.post('https://api.nft.storage/upload', fileData, {
+        headers: {
+            'Content-Type': contentType,
+            Authorization: `Bearer ${NFT_STORAGE_TOKEN}`,
+        },
+    });
+    return nftStorageResponse.data.value.cid;
 }
