@@ -10,7 +10,7 @@ const uuid = require('uuid');
 const axios = require('axios');
 
 // Global Vars
-const cycleTime = 60; //seconds
+const cycleTime = 30; //seconds
 const STREAMING_API_URL = 'http://127.0.0.1:1985';
 const STREAMING_SERVER_URL = 'http://127.0.0.1:8082';
 const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
@@ -25,9 +25,13 @@ const contract = new web3.eth.Contract(contractAbiJson, contractAddress);
 
 console.log(new Date(), `Starting cycling every ${cycleTime}th second of the minute.`);
 const streamingInfoURL = `${STREAMING_API_URL}/api/v1/streams`;
-let data = '';
-setInterval(() => {
-    request.get(streamingInfoURL, function (error, response, body) {
+
+entrypoint();
+setInterval(()=>{entrypoint();}, 60000);
+
+async function entrypoint(){
+    let data = '';
+    request.get(streamingInfoURL, async function (error, response, body) {
         if (!error && response.statusCode == 200) {
             data = JSON.parse(body);
             data.streams.forEach(element => {
@@ -37,13 +41,14 @@ setInterval(() => {
             console.error(error);
         }
     })
-}, cycleTime);
+}
 
 async function main(streamID, artistName) {
+    console.log(streamID, artistName);
     const recordingTimeSeconds = cycleTime;
     const recordedAudioFilePath = await recordAudio(recordingTimeSeconds, `${STREAMING_SERVER_URL}/${artistName}/${streamID}.mp3`)
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
-    const contract_info = { '0': '0x380D9A31E1F139A6990c923B53514D90295BB07b', '1': '1' } //await contract.methods.getTopArtistDonation(streamID).call();
+    const contract_info = await contract.methods.getTopArtistDonation(streamID).call();
     if (contract_info['1'] == '0') {
         console.log('Nobody donated. Discarding recording: ' + recordedAudioFile);
     } else {
@@ -113,12 +118,16 @@ async function main(streamID, artistName) {
 
 async function recordAudio(recordingDurationSeconds, sourceURL) {
     const outputFilePath = 'records/' + uuid.v4() + '.mp3';
+    console.log('Starting to record audio from ' + sourceURL);
     return new Promise((resolve, reject) => {
         ffmpeg(sourceURL)
             .noVideo()
             .audioChannels(2)
             .audioBitrate(128)
             .duration(recordingDurationSeconds)
+            .on('progress', function (progress) {
+                console.log('Processing: ' + progress.percent + '% done');
+            })
             .on('end', () => {
                 resolve(outputFilePath);
             })
