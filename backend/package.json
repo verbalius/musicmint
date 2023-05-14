@@ -1,16 +1,16 @@
 {
   "name": "musicmint",
   "version": "0.0.1",
-  "main": "server.js",
+  "main": "main.js",
   "license": "MIT",
   "dependencies": {
-    "ethers": "^6.3.0",
+    "axios": "^1.4.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
-    "ipfs-core": "^0.18.0",
-    "ipfs-http-client": "52.0.4",
+    "node-schedule": "^2.1.1",
     "web3": "^1.10.0"
   },
-  "start": "node run server.js"
+  "start": "node main.js"
 }

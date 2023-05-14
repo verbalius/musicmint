@@ -6,11 +6,11 @@ services:
       - ./srs-config.conf:/usr/local/srs/conf/docker.conf
     command: ["objs/srs", "-c", "conf/docker.conf"]
     # how to stream
-    # ffmpeg -re -i ~/Music/amen_break.wav -c:a aac -b:a 128k -f flv rtmp://127.0.0.1:1935/live/livestream
+    # ffmpeg -stream_loop -1 -re -i ~/Music/amen_break.wav -c:a aac -b:a 128k -f flv rtmp://127.0.0.1:1935/live/livestream
     ports:
       - 1935:1935 # stream
       - 1985:1985 # api
-      - 8080:8080 # http ui
+      - 8082:8080 # http ui
   # backend:
   #   build: ../backend/Dockerfile
   # frontend:

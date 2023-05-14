@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 */**/node_modules
+*/**/.env
 dist
 dist-ssr
 *.local
@@ -24,4 +25,4 @@ dist-ssr
 *.sln
 *.sw?
 
-backend/records/
+backend/records
