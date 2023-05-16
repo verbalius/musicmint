@@ -2,8 +2,6 @@ require('dotenv').config();
 
 const Web3 = require('web3');
 const schedule = require('node-schedule');
-const request = require('request');
-const https = require('https');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const uuid = require('uuid');
@@ -13,7 +11,7 @@ const axios = require('axios');
 const recordingDuration = 59; //seconds
 const STREAMING_API_URL = process.env.STREAMING_API_URL;
 const STREAMING_SERVER_URL = process.env.STREAMING_SERVER_URL;
-const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN
+const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN;
 
 // Certificate connection init block
 const web3 = new Web3(new Web3.providers.HttpProvider('https://rpc-mumbai.maticvigil.com/'));
@@ -23,33 +21,38 @@ const abiData = fs.readFileSync('contractAbi.json', 'utf-8');
 const contractAbiJson = JSON.parse(abiData);
 const contract = new web3.eth.Contract(contractAbiJson, contractAddress);
 
-console.log(new Date(), `Starting cycling every minute, recording ${recordingDuration}.`);
+console.log(new Date(), `Starting cycling every minute, recording ${recordingDuration} seconds of audio.`);
 const streamingInfoURL = `${STREAMING_API_URL}/api/v1/streams`;
 
-const job = schedule.scheduleJob('*/1 * * * *', ()=>{entrypoint();});
-job.schedule()
+const job = schedule.scheduleJob('*/1 * * * *', () => { entrypoint(); });
+job.schedule();
 
 async function entrypoint() {
     console.log('Cycle');
-    let data = '';
-    request.get(streamingInfoURL, async function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            data = JSON.parse(body);
-            data.streams.forEach(element => {
-                main(element.name, element.app);
-            });
-        } else {
+    axios.get(streamingInfoURL)
+        .then(response => {
+            if (response.status === 200) {
+                const data = response.data;
+                data.streams.forEach(element => {
+                    main(element.name, element.app);
+                });
+            } else if (response.status === 404) {
+                console.log('No streams at the moment');
+            } else {
+                console.error(response.statusText);
+            }
+        })
+        .catch(error => {
             console.error(error);
-        }
-    })
+        });
 }
 
 async function main(streamID, artistName) {
-    console.log("StreamID:",streamID,"ArtistName:",artistName);
+    console.log("StreamID:", streamID, "ArtistName:", artistName);
     const date = new Date();
     console.log(date);
     const recordingTimeSeconds = recordingDuration;
-    const recordedAudioFilePath = await recordAudio(recordingTimeSeconds, `${STREAMING_SERVER_URL}/${artistName}/${streamID}.mp3`)
+    const recordedAudioFilePath = await recordAudio(recordingTimeSeconds, `${STREAMING_SERVER_URL}/${artistName}/${streamID}.mp3`);
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
     const contract_info = await contract.methods.getTopArtistDonation(streamID).call();
     if (contract_info['1'] == '0') {
@@ -87,33 +90,33 @@ async function main(streamID, artistName) {
             "external_url": `ipfs://${audioFileCid}`,
             "animation_url": `ipfs://${audioFileCid}`,
             "project": {
-            "title": `${artistName} stream unique part #${audioFileCid}`,
-            "artwork": {
-            "uri": `ipfs://${audioFileCid}`,
-            "mimeType": "dnb_logo/png",
-            "nft": "nft"
-            },
-            "description": `This unique audio NFT was created during the DJ stream of artist ${artistName}`,
-            "type": "nft",
-            "originalReleaseDate": "05-13-2023",
-            "recordLabel": "MusicMint",
-            "publisher": "MusicMint",
-            "upc": "03600029145"
+                "title": `${artistName} stream unique part #${audioFileCid}`,
+                "artwork": {
+                    "uri": `ipfs://${audioFileCid}`,
+                    "mimeType": "dnb_logo/png",
+                    "nft": "nft"
+                },
+                "description": `This unique audio NFT was created during the DJ stream of artist ${artistName}`,
+                "type": "nft",
+                "originalReleaseDate": "05-13-2023",
+                "recordLabel": "MusicMint",
+                "publisher": "MusicMint",
+                "upc": "03600029145"
             },
             "isrc": "CC-XXX-YY-NNNNN",
             "artwork": {
-            "uri": `ipfs://${audioFileCid}`,
-            "mimeType": "audio/mp3",
-            "nft": "music nfts"
+                "uri": `ipfs://${audioFileCid}`,
+                "mimeType": "audio/mp3",
+                "nft": "music nfts"
             },
             "lyrics": {
-            "text": "Nft",
-            "nft": "nft"
+                "text": "Nft",
+                "nft": "nft"
             },
             "visualizer": {
-            "uri": `ipfs://${audioFileCid}`,
-            "mimeType": "audio/mp3",
-            "nft": "music nfts"
+                "uri": `ipfs://${audioFileCid}`,
+                "mimeType": "audio/mp3",
+                "nft": "music nfts"
             }
         }
 
@@ -133,7 +136,7 @@ async function main(streamID, artistName) {
 
         const mintingNFTResult = await contract.methods.mintNFT(NFTReceiver, metadataIPFSUrl, NFTCreator).encodeABI();
         const gasPrice = await web3.eth.getGasPrice();
-        const gasEstimate = await contract.methods.mintNFT(NFTReceiver, metadataIPFSUrl, NFTCreator).estimateGas({ from: web3_account.address });;
+        const gasEstimate = await contract.methods.mintNFT(NFTReceiver, metadataIPFSUrl, NFTCreator).estimateGas({ from: web3_account.address });
 
         const transaction = {
             from: web3_account.address,
@@ -167,7 +170,7 @@ async function recordAudio(recordingDurationSeconds, sourceURL) {
             .audioBitrate(128)
             .duration(recordingDurationSeconds)
             .on('end', () => {
-                console.log('Recorded!',outputFilePath);
+                console.log('Recorded!', outputFilePath);
                 resolve(outputFilePath);
             })
             .on('error', (err) => {
