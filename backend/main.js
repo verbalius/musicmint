@@ -53,6 +53,12 @@ async function main(streamID, artistName) {
     const recordedAudioFile = fs.readFileSync(recordedAudioFilePath);
     const contract_info = await contract.methods.getTopArtistDonation(streamID).call();
     if (contract_info['1'] == '0') {
+        // when we call getTopArtistDonation we get this kind of JSON back
+        // {
+        //   "0": "<wallet address>",
+        //   "1": "<timestamp>"
+        // }
+        // if the timestamp is 0 then this means that nobody had donated to the target wallet
         console.log('Nobody donated. Discarding recording: ' + recordedAudioFilePath);
     } else {
         //
